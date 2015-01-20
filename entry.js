@@ -12,6 +12,18 @@
  * build stage and inlined by value (they won't be in the output as is).
  * The constants parser is dumb (made on regexps), use the following style only:
  * var CONSTANT_NAME = 'constant value';
+ *
+ * Another feature is inlining. Variables starting with `__inline_` are inlined.
+ * Think of it as a macros. For example, the following code:
+ *     __inline_foo = foo();
+ *     __inline_bar = bar(__inline_foo) + 2;
+ *     baz(1, 2, 3, !__inline_bar);
+ * will be transformed into:
+ *     baz(1, 2, 3, ! (bar( (foo()) ) + 2) );
+  * Again, this stuff is based on regexps and may work incorrectly.
+ * Use it to nest expressions while keeping source readable. But beware, this
+ * may break long runs of identical text, so RegPack would work worse.
+ * I've warned you!
  */
 
 // Dimensions of the card itself
@@ -69,11 +81,11 @@ function drawLogoText(){ // Actually, a procedure
 	// Transformatin matrix. This is the only way to get skew transform
 	// Scale up by factor 4 (makes all coordinates shorter), once we already have to call this
 	// Askew with parameter -3. Some hard Math here. It's easier to guess.
-	c.transform(2, 0, -1.5, 2, 0, 0);
+	var __inline_transform = c.transform(2, 0, -1.5, 2, 0, 0);
 
 	// S
 	// Line just started, so there's not implicit lineTo
-	c.arc(-7, -6, 5, -0.7, 2.5, true);
+	c.arc(-7, -6, 5, -0.7, 2.5, !__inline_transform);
 	// Implicit lineTo
 	c.arc(-9, 6, 5, -0.7, 2.5);
 
