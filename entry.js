@@ -1,3 +1,10 @@
+a.style.transform="rotateY(-360deg) scale(0.01)";
+z=-90;
+setInterval(function(){
+  if(z<360)z+=15;
+  a.style.transform="rotateY("+z+"deg) scale("+1/(360/z)+")";
+}, 30);
+
 // Dimensions of the card itself
 // REMOVE THIS AT THE GOLFING STAGE!
 var VIEWPORT_WIDTH = 400;
