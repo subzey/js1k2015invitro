@@ -1,15 +1,31 @@
 #!/usr/bin/env node
 var UglifyJS = require('uglify-js');
 
-var str = require('fs').readFileSync('entry.js', 'utf-8');
+var source = require('fs').readFileSync('entry.js', 'utf-8');
 
-var result = UglifyJS.minify(str, {
+// Determine constants
+
+var constants = {};
+
+// Sandbox js environment for running code
+var sandbox = require('vm').createContext({});
+
+source = source.replace(/(?:var|const)\s+([A-Z0-9][A-Z0-9_]{2,})\s*=[^;]*;?/g, function(code, varname){
+	console.log('Constant expression: ' + code);
+	require('vm').runInContext(code, sandbox, '((entry code))');
+	constants[varname] = sandbox[varname];
+	console.log('Evaluated into: (' + typeof constants[varname] + ') '  + constants[varname]);
+	return '';
+});
+
+var result = UglifyJS.minify(source, {
 	fromString: true,
 	mangle: {
 		toplevel: true
 	},
 	compress: {
-		hoist_vars: true
+		hoist_vars: true,
+		global_defs: constants
 	}
 });
 

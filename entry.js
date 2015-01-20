@@ -1,7 +1,22 @@
+/**
+ * Here's something you need to know.
+ *
+ * This stuff can be minified with uglifyjs. 
+ * Install node, run `npm install` once. And then `node make` to build.
+ *
+ * In order to make golfing easy and still keep source readable, some
+ * prepocessing is used.
+ *
+ * Variables with names containing only CAPS letters, digits and underscores
+ * and starting with letter is considered constants, it is evaluated at the
+ * build stage and inlined by value (they won't be in the output as is).
+ * The constants parser is dumb (made on regexps), use the following style only:
+ * var CONSTANT_NAME = 'constant value';
+ */
+
 // Dimensions of the card itself
-// REMOVE THIS AT THE GOLFING STAGE!
-var VIEWPORT_WIDTH = 400;
-var VIEWPORT_HEIGHT = 600;
+var VIEWPORT_WIDTH = 400; // constant
+var VIEWPORT_HEIGHT = 600; // constant
 
 var pattern;
 var patternMovementAngle;
