@@ -1,7 +1,7 @@
 /**
  * Here's something you need to know.
  *
- * This stuff can be minified with uglifyjs. 
+ * This stuff can be minified with uglifyjs.
  * Install node, run `npm install` once. And then `node make` to build.
  *
  * In order to make golfing easy and still keep source readable, some
@@ -32,50 +32,129 @@ var VIEWPORT_HEIGHT = 600; // constant
 
 var pattern;
 var patternMovementAngle;
-var patternCanvas = a.cloneNode();
-var patternCtx = patternCanvas.getContext('2d');
 
 var t = 0;
 
-function updatePattern(){
-	// Both set size and reset canvas
-	patternCanvas.width = patternCanvas.height = 16;
-	var hueOrRandom = Math.random()*360;
-	patternCtx.fillStyle = 'hsl(' + hueOrRandom + ',50%,50%)';
-	patternCtx.fillRect(0, 0, 16, 16);
-	patternCtx.strokeStyle = patternCtx.fillStyle = 'hsl(' + (hueOrRandom + 120) % 360 + ',50%,50%)';
-	var hueOrRandom = Math.random() * 4; // Float [0; 3.9)
-	if (hueOrRandom & 2){
-		// 3 or 2
-		patternCtx.arc(8, 8, Math.random() * 5 + 2, 0, Math.PI*2);
-		if (hueOrRandom & 1){
-			patternCtx.stroke();
-		} else {
-			patternCtx.fill();
-		}
-	} else {
-		// 0 or 1
-		if (hueOrRandom & 1){
-			patternCtx.moveTo(0,0);
-			patternCtx.lineTo(16,16);
-			patternCtx.moveTo(0,16);
-			patternCtx.lineTo(16,0);
-		} else {
-			patternCtx.moveTo(8,0);
-			patternCtx.lineTo(8,16);
-			patternCtx.moveTo(0,8);
-			patternCtx.lineTo(16,8);
-		}
-		patternCtx.lineWidth = Math.random() * 5 + 2;
-		patternCtx.stroke();
-	}
-	pattern = c.createPattern(patternCanvas, '');
-	patternMovementAngle = Math.random() * 2 * Math.PI;
-}
 
-function drawLogoText(){ // Actually, a procedure
-	c.beginPath();
+setInterval(function(){
+	var canvasWidth = a.width;
+	var canvasHeight = a.height;
+
+	// t is a global state
+	if (!t){
+		// UPDATE PATTERN
+		// Both set size and reset canvas
+		a.width = a.height = 16;
+		var hueOrRandom = Math.random()*360;
+		c.fillStyle = 'hsl(' + hueOrRandom + ',50%,50%)';
+		c.fillRect(0, 0, 16, 16);
+		c.strokeStyle = c.fillStyle = 'hsl(' + (hueOrRandom + 120) % 360 + ',50%,50%)';
+		var hueOrRandom = Math.random() * 4; // Float [0; 3.9)
+		if (hueOrRandom & 2){
+			// 3 or 2
+			c.arc(8, 8, Math.random() * 5 + 2, 0, 2 * Math.PI);
+			if (hueOrRandom & 1){
+				c.stroke();
+			} else {
+				c.fill();
+			}
+		} else {
+			// 0 or 1
+			if (hueOrRandom & 1){
+				c.moveTo(0,0);
+				c.lineTo(16,16);
+				c.moveTo(0,16);
+				c.lineTo(16,0);
+			} else {
+				c.moveTo(8,0);
+				c.lineTo(8,16);
+				c.moveTo(0,8);
+				c.lineTo(16,8);
+			}
+			c.lineWidth = Math.random() * 5 + 2;
+			c.stroke();
+		}
+		pattern = c.createPattern(a, '');
+		patternMovementAngle = Math.random() * 2 * Math.PI;
+	}
+	t = ++t%150;
+
+	// Reset canvas and its state (including transforms)
+	var __inline_canvasWidth = a.width = canvasWidth;
+	var __inline_canvasHeight = a.height = canvasHeight;
+	var __inline_canvasAlpha = c.globalAlpha = .1;
+	c.fillRect(0, 0, __inline_canvasWidth, __inline_canvasHeight, __inline_canvasAlpha);
+	c.globalAlpha = 1;
+	// Set coordinate origin to the center of the screen
+	// Otherwise it would be hard to do rotations
+	c.translate(canvasWidth/2, canvasHeight/2);
+	// Scale context so logical viewport fits into physical
+	var scalingCoefficient = Math.min(canvasWidth / VIEWPORT_WIDTH, canvasHeight / VIEWPORT_HEIGHT);
+	c.scale(scalingCoefficient, scalingCoefficient);
+
+	c.clearRect(-VIEWPORT_WIDTH/2 + 10, -VIEWPORT_HEIGHT/2 + 10, VIEWPORT_WIDTH - 20, VIEWPORT_HEIGHT - 20);
+
+	// From on now we have rect (-VW/2, -VH/2) to (+VW/2, +VH/2).
+	// Everything outside this rect is transparent
+
+	c.lineWidth = 15;
+
+
+	var alpha = Math.max(Math.min(t/ 10 - 10, Math.PI), 0);
+
+
+	c.save();
+		// Common rotation
+		c.rotate(alpha - Math.PI/4);
+
+		// Partial drawing af lines
+		c.setLineDash([14e3, 1e3]);
+		c.lineDashOffset  = 14e3 - t * 100;
+
+		c.beginPath();
+		c.save();
+			c.scale(Math.abs(Math.cos(alpha + 1)), 1);
+			c.arc(0, 0, 200, 0, 2 * Math.PI);
+		c.restore();
+		c.stroke();
+
+		c.beginPath();
+		c.save();
+			c.scale(1, Math.abs(Math.sin(alpha + 0.55)));
+			c.arc(0, 0, 200, -Math.PI, Math.PI);
+		c.restore();
+		c.stroke();
+	c.restore();
+
+
+	c.save();
+		c.scale(3, 3);
+		c.textAlign = 'center';
+
+		c.fillText(2015, 0, 20);
+
+
+// Everythind drawn until this point will be covered with pattern
+		c.save();
+			c.globalCompositeOperation = 'source-atop';
+			c.fillStyle = pattern;
+			c.rect(-250, -250, 500, 500);
+			c.setTransform(1,0,0,1,0,0); // Unlike regular transform(), it is not multiplied with previous value
+			c.translate(Math.cos(patternMovementAngle) * t % 16, Math.sin(patternMovementAngle) * t % 16);
+			c.fill();
+		c.restore();
+
+		c.fillText('We want to invite you', 0, -80);
+		c.fillText('— to —', 0, -70);
+		c.fillText('——', 0, 70);
+		c.fillText('a huge compo', 0, 80);
+		c.fillText('of tiny js code', 0, 90);
+	c.restore();
+
+// DRAW LOGO
+
 	c.lineWidth=4;
+	c.beginPath();
 	// Save point
 	c.save();
 	// Transformatin matrix. This is the only way to get skew transform
@@ -114,86 +193,7 @@ function drawLogoText(){ // Actually, a procedure
 	c.lineTo(26, 13);
 	c.stroke();
 
-	c.restore();
-}
-
-setInterval(function(){
-	// Reset canvas and its state (including transforms)
-	a.width^=0;
-	c.globalAlpha = .1;
-	c.fillRect(0,0,a.width,a.height);
-	c.globalAlpha = 1;
-	// Set coordinate origin to the center of the screen
-	// Otherwise it would be hard to do rotations
-	c.translate(a.width/2, a.height/2);
-	// Scale context so logical viewport fits into physical
-	var scalingCoefficient = Math.min(a.width / VIEWPORT_WIDTH, a.height / VIEWPORT_HEIGHT);
-	c.scale(scalingCoefficient, scalingCoefficient);
-
-	c.clearRect(-VIEWPORT_WIDTH/2 + 10, -VIEWPORT_HEIGHT/2 + 10, VIEWPORT_WIDTH - 20, VIEWPORT_HEIGHT - 20);
-
-	// From on now we have rect (-VW/2, -VH/2) to (+VW/2, +VH/2).
-	// Everything outside this rect is transparent
-
-	c.lineWidth = 15;
-
-	if (!t){
-		updatePattern();
-	}
-	t++;
-	t%=150;
-
-	var alpha = Math.max(Math.min(t/ 10 - 10, Math.PI), 0);
-
-
-	c.save();
-		// Common rotation
-		c.rotate(alpha - Math.PI/4);
-
-		// Partial drawing af lines
-		c.setLineDash([14e3, 1e3]);
-		c.lineDashOffset  = 14e3 - t * 100;
-
-		c.beginPath();
-		c.save();
-		c.scale(Math.abs(Math.cos(alpha + 1)), 1);
-		c.arc(0, 0, 200, 0, Math.PI * 2);
-		c.restore();
-		c.stroke();
-
-		c.beginPath();
-		c.save();
-		c.scale(1, Math.abs(Math.sin(alpha + 0.55)));
-		c.arc(0, 0, 200, -Math.PI, Math.PI);
-		c.restore();
-		c.stroke();
-	c.restore();
-
-
-	c.save();
-		c.scale(3, 3);
-		c.textAlign = 'center';
-
-		c.fillText(2015, 0, 20);
-
-		c.save();
-			c.globalCompositeOperation = 'source-atop';
-			c.fillStyle = pattern;
-			c.rect(-250, -250, 500, 500);
-			c.setTransform(1,0,0,1,0,0); // Unlike regular transform(), it is not multiplied with previous value
-			c.translate(Math.cos(patternMovementAngle) * t % 16, Math.sin(patternMovementAngle) * t % 16);
-			c.fill();
-		c.restore();
-
-		c.fillText('We want to invite you', 0, -80);
-		c.fillText('— to —', 0, -70);
-		c.fillText('——', 0, 70);
-		c.fillText('a huge compo', 0, 80);
-		c.fillText('of tiny js code', 0, 90);
-	c.restore();
-
-
-	drawLogoText();
+	//c.restore();
 
 
 }, 40);
