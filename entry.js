@@ -40,22 +40,22 @@ var t = 0;
 function updatePattern(){
 	// Both set size and reset canvas
 	patternCanvas.width = patternCanvas.height = 16;
-	var hue = Math.random()*360;
-	patternCtx.fillStyle = 'hsl(' + hue + ',50%,50%)';
+	var hueOrRandom = Math.random()*360;
+	patternCtx.fillStyle = 'hsl(' + hueOrRandom + ',50%,50%)';
 	patternCtx.fillRect(0, 0, 16, 16);
-	patternCtx.strokeStyle = patternCtx.fillStyle = 'hsl(' + (hue + 120) % 360 + ',50%,50%)';
-	var random = Math.random() * 4; // Float [0; 3.9)
-	if (random & 2){
+	patternCtx.strokeStyle = patternCtx.fillStyle = 'hsl(' + (hueOrRandom + 120) % 360 + ',50%,50%)';
+	var hueOrRandom = Math.random() * 4; // Float [0; 3.9)
+	if (hueOrRandom & 2){
 		// 3 or 2
 		patternCtx.arc(8, 8, Math.random() * 5 + 2, 0, Math.PI*2);
-		if (random & 1){
+		if (hueOrRandom & 1){
 			patternCtx.stroke();
 		} else {
 			patternCtx.fill();
 		}
 	} else {
 		// 0 or 1
-		if (random & 1){
+		if (hueOrRandom & 1){
 			patternCtx.moveTo(0,0);
 			patternCtx.lineTo(16,16);
 			patternCtx.moveTo(0,16);
@@ -137,11 +137,13 @@ setInterval(function(){
 
 	c.lineWidth = 15;
 
-	var phase = t % 150;
+	if (!t){
+		updatePattern();
+	}
 	t++;
-	phase || updatePattern();
+	t%=150;
 
-	var alpha = (phase - 100) / 10;
+	var alpha = (t - 100) / 10;
 	if (alpha < 0 || alpha > Math.PI){
 		alpha = 0;
 	}
@@ -153,20 +155,19 @@ setInterval(function(){
 
 		// Partial drawing af lines
 		c.setLineDash([14e3, 1e3]);
-		c.strokeStyle = 'red';
-		c.lineDashOffset  = 14e3 - phase * 100;
+		c.lineDashOffset  = 14e3 - t * 100;
 
 		c.beginPath();
 		c.save();
 		c.scale(Math.abs(Math.cos(alpha + 1)), 1);
-		c.arc(0, 0, 200, 0, Math.PI * 2, false);
+		c.arc(0, 0, 200, 0, Math.PI * 2);
 		c.restore();
 		c.stroke();
 
 		c.beginPath();
 		c.save();
 		c.scale(1, Math.abs(Math.sin(alpha + 0.55)));
-		c.arc(0, 0, 200, -Math.PI, Math.PI, false);
+		c.arc(0, 0, 200, -Math.PI, Math.PI);
 		c.restore();
 		c.stroke();
 	c.restore();
@@ -183,7 +184,7 @@ setInterval(function(){
 			c.fillStyle = pattern;
 			c.rect(-250, -250, 500, 500);
 			c.setTransform(1,0,0,1,0,0); // Unlike regular transform(), it is not multiplied with previous value
-			c.translate(t * Math.cos(patternMovementAngle) % 16, t * Math.sin(patternMovementAngle) % 16);
+			c.translate(Math.cos(patternMovementAngle) * t % 16, Math.sin(patternMovementAngle) * t % 16);
 			c.fill();
 		c.restore();
 
