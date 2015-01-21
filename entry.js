@@ -93,7 +93,7 @@ setInterval(function(){
 	// Otherwise it would be hard to do rotations
 	c.translate(v01/2, v02/2);
 	// Scale context so logical viewport fits into physical
-	v03 = Math.min(canvasWidth / VIEWPORT_WIDTH, canvasHeight / VIEWPORT_HEIGHT);
+	v03 = Math.min(v01 / VIEWPORT_WIDTH, v02 / VIEWPORT_HEIGHT);
 	c.scale(v03, v03);
 
 	c.clearRect(-VIEWPORT_WIDTH/2 + 10, -VIEWPORT_HEIGHT/2 + 10, VIEWPORT_WIDTH - 20, VIEWPORT_HEIGHT - 20);
