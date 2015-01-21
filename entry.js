@@ -30,37 +30,41 @@
 var VIEWPORT_WIDTH = 400; // constant
 var VIEWPORT_HEIGHT = 600; // constant
 
+// Variables that holds certain values between setInterval calls
+// Very unlikely these can be reused
 var pattern;
 var patternMovementAngle;
-
 var t = 0;
+
+// Variables that can (and should) be reused
+var v01, v02, v03;
 
 
 setInterval(function(){
-	var canvasWidth = a.width;
-	var canvasHeight = a.height;
+	v01 = a.width;
+	v02 = a.height;
 
 	// t is a global state
 	if (!t){
 		// UPDATE PATTERN
 		// Both set size and reset canvas
 		a.width = a.height = 16;
-		var hueOrRandom = Math.random()*360;
-		c.fillStyle = 'hsl(' + hueOrRandom + ',50%,50%)';
+		v03 = Math.random()*360;
+		c.fillStyle = 'hsl(' + v03 + ',50%,50%)';
 		c.fillRect(0, 0, 16, 16);
-		c.strokeStyle = c.fillStyle = 'hsl(' + (hueOrRandom + 120) % 360 + ',50%,50%)';
-		var hueOrRandom = Math.random() * 4; // Float [0; 3.9)
-		if (hueOrRandom & 2){
+		c.strokeStyle = c.fillStyle = 'hsl(' + (v03 + 120) % 360 + ',50%,50%)';
+		v03 = Math.random() * 4; // Float [0; 3.9)
+		if (v03 & 2){
 			// 3 or 2
 			c.arc(8, 8, Math.random() * 5 + 2, 0, 2 * Math.PI);
-			if (hueOrRandom & 1){
+			if (v03 & 1){
 				c.stroke();
 			} else {
 				c.fill();
 			}
 		} else {
 			// 0 or 1
-			if (hueOrRandom & 1){
+			if (v03 & 1){
 				c.moveTo(0,0);
 				c.lineTo(16,16);
 				c.moveTo(0,16);
@@ -80,17 +84,17 @@ setInterval(function(){
 	t = ++t%150;
 
 	// Reset canvas and its state (including transforms)
-	var __inline_canvasWidth = a.width = canvasWidth;
-	var __inline_canvasHeight = a.height = canvasHeight;
+	var __inline_canvasWidth = a.width = v01;
+	var __inline_canvasHeight = a.height = v02;
 	var __inline_canvasAlpha = c.globalAlpha = .1;
 	c.fillRect(0, 0, __inline_canvasWidth, __inline_canvasHeight, __inline_canvasAlpha);
 	c.globalAlpha = 1;
 	// Set coordinate origin to the center of the screen
 	// Otherwise it would be hard to do rotations
-	c.translate(canvasWidth/2, canvasHeight/2);
+	c.translate(v01/2, v02/2);
 	// Scale context so logical viewport fits into physical
-	var scalingCoefficient = Math.min(canvasWidth / VIEWPORT_WIDTH, canvasHeight / VIEWPORT_HEIGHT);
-	c.scale(scalingCoefficient, scalingCoefficient);
+	v03 = Math.min(canvasWidth / VIEWPORT_WIDTH, canvasHeight / VIEWPORT_HEIGHT);
+	c.scale(v03, v03);
 
 	c.clearRect(-VIEWPORT_WIDTH/2 + 10, -VIEWPORT_HEIGHT/2 + 10, VIEWPORT_WIDTH - 20, VIEWPORT_HEIGHT - 20);
 
@@ -100,12 +104,12 @@ setInterval(function(){
 	c.lineWidth = 15;
 
 
-	var alpha = Math.max(Math.min(t/ 10 - 10, Math.PI), 0);
+	v03 = Math.max(Math.min(t/ 10 - 10, Math.PI), 0);
 
 
 	c.save();
 		// Common rotation
-		c.rotate(alpha - Math.PI/4);
+		c.rotate(v03 - Math.PI/4);
 
 		// Partial drawing af lines
 		c.setLineDash([14e3, 1e3]);
@@ -113,14 +117,14 @@ setInterval(function(){
 
 		c.beginPath();
 		c.save();
-			c.scale(Math.abs(Math.cos(alpha + 1)), 1);
+			c.scale(Math.abs(Math.cos(v03 + 1)), 1);
 			c.arc(0, 0, 200, 0, 2 * Math.PI);
 		c.restore();
 		c.stroke();
 
 		c.beginPath();
 		c.save();
-			c.scale(1, Math.abs(Math.sin(alpha + 0.55)));
+			c.scale(1, Math.abs(Math.sin(v03 + 0.55)));
 			c.arc(0, 0, 200, -Math.PI, Math.PI);
 		c.restore();
 		c.stroke();

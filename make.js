@@ -94,7 +94,7 @@ function run(){
 	});
 	var minified = result.code;
 
-	if (false){
+	if (true){
 		minified = minified.replace(/\bvar\s+([^;]+)/g, function(_, vars){
 			var cleaned = vars.split(',').filter(function(varDecl){
 				return /=/.test(varDecl);
