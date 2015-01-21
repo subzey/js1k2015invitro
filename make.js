@@ -16,7 +16,10 @@ function run(){
 		require('fs').unlinkSync('build/preprocessed.js');
 	} catch (e){  }
 	try {
-		require('fs').unlinkSync('build/prod.js');
+		require('fs').unlinkSync('build/uglified.js');
+	} catch (e){  }
+	try {
+		require('fs').unlinkSync('build/regpacked.js');
 	} catch (e){  }
 	try {
 		require('fs').unlinkSync('build/prod.html');
@@ -76,6 +79,8 @@ function run(){
 
 	require('fs').writeFileSync('build/preprocessed.js', source);
 
+	console.log('UglifyJS...');
+
 	// Uglify
 	var result = UglifyJS.minify(source, {
 		fromString: true,
@@ -102,20 +107,41 @@ function run(){
 
 	minified = minified.replace(/^;+|;+$/g, ''); // Strip leading and trailing semicolons
 
+
+	require('fs').writeFileSync('build/uglified.js', minified);
+
+	console.log('RegPack...');
+
+	// RegPack
+	var runRegPack = require('./includes/regpackrun.js');
+	var regPackOptions = {
+		originalString: minified,
+		paramOHash2D: false,
+		paramOHashWebGL: false,
+		paramOHashAudio: false
+	};
+
+	var regpackedWithMath = runRegPack(regPackOptions, true);
+	var regpackedWithoutMath = runRegPack(regPackOptions, false);
+
+	var regpacked = Buffer.byteLength(regpackedWithMath) < Buffer.byteLength(regpackedWithoutMath) ? regpackedWithMath : regpackedWithoutMath;
+
+
+	require('fs').writeFileSync('build/regpacked.js', regpacked);
+
+	var byteLength = Buffer.byteLength(regpacked);
+
+	console.log(byteLength + ' bytes');
+	lastResult = byteLength;
+
 	var inlined = require('fs').readFileSync('shim-normal.html', 'utf-8');
 
 	inlined = inlined.replace(/(\t*)<script\s+src[^]*?<\/script>/, function(_, tab){
-			return tab + '<script>\n// start of submission //\n' + minified + '\n// end of submission //\n' + tab + '</script>';
+			return tab + '<script>\n// start of submission //\n' + regpacked + '\n// end of submission //\n' + tab + '</script>';
 		}
 	);
 
 	require('fs').writeFileSync('build/prod.html', inlined);
-	require('fs').writeFileSync('build/prod.js', minified);
-
-	var byteLength = Buffer.byteLength(minified);
-
-	console.log(byteLength + ' bytes');
-	lastResult = byteLength;
 }
 
 run();
