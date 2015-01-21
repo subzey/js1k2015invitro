@@ -143,7 +143,7 @@ setInterval(function(){
 	t++;
 	t%=150;
 
-	var alpha = Math.max(Math.min(t/ 100 - 10, Math.PI), 0);
+	var alpha = Math.max(Math.min(t/ 10 - 10, Math.PI), 0);
 
 
 	c.save();
