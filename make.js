@@ -150,13 +150,23 @@ function watchState(){
 	process.title = (isFinite(lastResult) ? '[' + lastResult + ' bytes] ' : '') + 'Waiting for file change...';
 }
 
+var rerunTimeoutId = null;
+
 if (process.argv.indexOf('--watch', 2) !== -1){
 	watchState();
 	require('fs').watch('.', function(event, filename){
 		if (event !== 'change' || filename !== 'entry.js'){
 			return;
 		}
-		run();
-		watchState();
+		if (rerunTimeoutId){
+			return;
+		}
+		// Sometimes FS sends several change events (due to the way Sublime Text saves files)
+		// Wait until FS settles and then run
+		rerunTimeoutId = setTimeout(function(){
+			rerunTimeoutId = null;
+			run();
+			watchState();
+		}, 40);
 	});
 }
