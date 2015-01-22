@@ -52,19 +52,16 @@ setInterval(function(){
 		v03 = Math.random()*360;
 		c.fillStyle = 'hsl(' + v03 + ',50%,50%)';
 		c.fillRect(0, 0, 16, 16);
-		c.strokeStyle = c.fillStyle = 'hsl(' + (v03 + 120) % 360 + ',50%,50%)';
-		v03 = Math.random() * 4; // Float [0; 3.9)
-		if (v03 & 2){
-			// 3 or 2
-			c.arc(8, 8, Math.random() * 5 + 2, 0, 2 * Math.PI);
-			if (v03 & 1){
+		c.strokeStyle = c.fillStyle = 'hsl(' + (v03 + 120) + ',50%,50%)';
+		if (Math.random() < 0.5){
+			c.arc(8, 8, 5 * Math.random() + 2, 0, 2 * Math.PI);
+			if (Math.random() < 0.5){
 				c.stroke();
 			} else {
 				c.fill();
 			}
 		} else {
-			// 0 or 1
-			if (v03 & 1){
+			if (Math.random() < 0.5){
 				c.moveTo(0,0);
 				c.lineTo(16,16);
 				c.moveTo(0,16);
@@ -75,7 +72,7 @@ setInterval(function(){
 				c.moveTo(0,8);
 				c.lineTo(16,8);
 			}
-			c.lineWidth = Math.random() * 5 + 2;
+			c.lineWidth = 5 * Math.random() + 2;
 			c.stroke();
 		}
 		pattern = c.createPattern(a, '');
