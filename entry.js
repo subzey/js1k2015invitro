@@ -111,7 +111,7 @@ setInterval(function(){
 		// Partial drawing af lines
 		c.setLineDash([
 			3500, // This value is carefuly calculated
-			500 // This one should just be big enough
+			3500 // This one should just be big enough
 		]);
 		c.lineDashOffset  = 3500 - t * 25;
 
@@ -150,7 +150,7 @@ setInterval(function(){
 				Math.cos(patternMovementAngle) * t % 16,
 				Math.sin(patternMovementAngle) * t % 16
 			); // Unlike regular transform(), it is not multiplied with previous state
-			c.rect(-16, -16, v01, v02);
+			c.rect(-16, -16, 3500, 3500); // I hope, that's enough
 			c.fill();
 		c.restore();
 
