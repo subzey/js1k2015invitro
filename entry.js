@@ -142,7 +142,6 @@ setInterval(function(){
 		c.save();
 			c.globalCompositeOperation = 'source-atop';
 			c.fillStyle = pattern;
-			c.rect(-250, -250, 500, 500);
 			c.setTransform(
 				1,
 				0,
@@ -151,6 +150,7 @@ setInterval(function(){
 				Math.cos(patternMovementAngle) * t % 16,
 				Math.sin(patternMovementAngle) * t % 16
 			); // Unlike regular transform(), it is not multiplied with previous state
+			c.rect(-16, -16, v01, v02);
 			c.fill();
 		c.restore();
 
@@ -167,7 +167,7 @@ setInterval(function(){
 	// Transformatin matrix. This is the only way to get skew transform
 	// Scale up by factor 4 (makes all coordinates shorter), once we already have to call this
 	// Askew with parameter -3. Some hard Math here. It's easier to guess.
-	var __inline_transform = c.transform(.5, 0, -.6, .5, 0, 0);
+	var __inline_transform = c.transform(.6, 0, -.5, .6, 0, 0);
 
 	// S
 	// Line just started, so there's not implicit lineTo
