@@ -104,12 +104,12 @@ setInterval(function(){
 	c.lineWidth = 4;
 
 
-	v03 = Math.PI/(1+Math.exp(t/7.5-10));
+	var __inline_alpha = v03 = Math.PI/4 - Math.PI/(1+Math.exp(t/7.5-10));
 
 
 	c.save();
 		// Common rotation
-		c.rotate(v03 - Math.PI/4);
+		c.rotate(__inline_alpha);
 
 		// Partial drawing af lines
 		c.setLineDash([
@@ -120,14 +120,14 @@ setInterval(function(){
 
 		c.beginPath();
 		c.save();
-			c.scale(Math.abs(Math.cos(v03 + 1)), 1);
+			c.scale(Math.abs(Math.sin(v03 - .2)), 1);
 			c.arc(0, 0, 50, 0, 2 * Math.PI);
 		c.restore();
 		c.stroke();
 
 		c.beginPath();
 		c.save();
-			c.scale(1, Math.abs(Math.sin(v03 + 0.55)));
+			c.scale(1, Math.abs(Math.sin(v03 + 1.8)));
 			c.arc(0, 0, 50, -Math.PI, Math.PI);
 		c.restore();
 		c.stroke();
