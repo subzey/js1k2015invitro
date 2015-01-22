@@ -116,7 +116,6 @@ function run(){
 	var runRegPack = require('./includes/regpackrun.js');
 	var regPackOptions = {
 		originalString: minified,
-		paramOHash2D: false,
 		paramOHashWebGL: false,
 		paramOHashAudio: false
 	};

@@ -47,6 +47,55 @@ function runRegPack(formParams, withMath){
 		this.attributes[name] = value || '';
 	};
 
+	function KindaCanvas(){
+		KindaElement.apply(this, arguments);
+	}
+
+	require('util').inherits(KindaCanvas, KindaElement);
+
+	KindaCanvas.prototype.getContext = function(context){
+		if (context == '2d'){
+			if (!this._context){
+				this._context = new KindaCanvasContext2D(this);
+			}
+			return this._context;
+		}
+		return {};
+	};
+
+	function KindaCanvasContext2D (canvas){
+		this.canvas = canvas;
+		// Exported from Chrome
+		this.fillStyle = "#000000";
+		this.font = "10px sans-serif";
+		this.globalAlpha = 1;
+		this.globalCompositeOperation = "source-over";
+		this.imageSmoothingEnabled = true;
+		this.lineCap = "butt";
+		this.lineDashOffset = 0;
+		this.lineJoin = "miter";
+		this.lineWidth = 1;
+		this.miterLimit = 10;
+		this.shadowBlur = 0;
+		this.shadowColor = "rgba(0, 0, 0, 0)";
+		this.shadowOffsetX = 0;
+		this.shadowOffsetY = 0;
+		this.strokeStyle = "#000000";
+		this.textAlign = "start";
+		this.textBaseline = "alphabetic";
+	}
+
+	["save", "restore", "scale", "rotate", "translate", "transform", "setTransform", "resetTransform",
+	"createLinearGradient", "createRadialGradient", "createPattern", "clearRect", "fillRect", "strokeRect",
+	"beginPath", "fill", "stroke", "drawFocusIfNeeded", "clip", "isPointInPath", "isPointInStroke",
+	"fillText", "strokeText", "measureText", "drawImage", "createImageData", "getImageData", "putImageData",
+	"getContextAttributes", "setLineDash", "getLineDash", "setAlpha", "setCompositeOperation",
+	"setLineWidth", "setLineCap", "setLineJoin", "setMiterLimit", "clearShadow", "setStrokeColor",
+	"setFillColor", "drawImageFromRect", "setShadow", "closePath", "moveTo", "lineTo", "quadraticCurveTo",
+	"bezierCurveTo", "arcTo", "rect", "arc", "ellipse"].forEach(function(key){
+		KindaCanvasContext2D.prototype[key] = function(){};
+	});
+
 	var elementsById = {};
 
 	var kindaDocument = {
@@ -61,6 +110,12 @@ function runRegPack(formParams, withMath){
 				elementsById[id] = element;
 			}
 			return elementsById[id];
+		},
+		createElement: function(nodeName){
+			if (nodeName.toLowerCase() === 'canvas'){
+				return new KindaCanvas();
+			}
+			return new KindaElement();
 		}
 	};
 
