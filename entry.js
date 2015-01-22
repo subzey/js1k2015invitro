@@ -27,8 +27,8 @@
  */
 
 // Dimensions of the card itself
-var VIEWPORT_WIDTH = 400; // constant
-var VIEWPORT_HEIGHT = 600; // constant
+var VIEWPORT_WIDTH = 100; // constant
+var VIEWPORT_HEIGHT = 150; // constant
 
 // Variables that holds certain values between setInterval calls
 // Very unlikely these can be reused
@@ -96,15 +96,15 @@ setInterval(function(){
 	v03 = Math.min(v01 / VIEWPORT_WIDTH, v02 / VIEWPORT_HEIGHT);
 	c.scale(v03, v03);
 
-	c.clearRect(-VIEWPORT_WIDTH/2 + 10, -VIEWPORT_HEIGHT/2 + 10, VIEWPORT_WIDTH - 20, VIEWPORT_HEIGHT - 20);
+	c.clearRect(-VIEWPORT_WIDTH/2 + 3, -VIEWPORT_HEIGHT/2 + 3, VIEWPORT_WIDTH - 6, VIEWPORT_HEIGHT - 6);
 
 	// From on now we have rect (-VW/2, -VH/2) to (+VW/2, +VH/2).
 	// Everything outside this rect is transparent
 
-	c.lineWidth = 15;
+	c.lineWidth = 4;
 
 
-	v03 = Math.max(Math.min(t/ 10 - 10, Math.PI), 0);
+	v03 = Math.PI/(1+Math.exp(t/7.5-10));
 
 
 	c.save();
@@ -112,30 +112,33 @@ setInterval(function(){
 		c.rotate(v03 - Math.PI/4);
 
 		// Partial drawing af lines
-		c.setLineDash([14e3, 1e3]);
-		c.lineDashOffset  = 14e3 - t * 100;
+		c.setLineDash([
+			3500, // This value is carefuly calculated
+			500 // This one should just be big enough
+		]);
+		c.lineDashOffset  = 3500 - t * 25;
 
 		c.beginPath();
 		c.save();
 			c.scale(Math.abs(Math.cos(v03 + 1)), 1);
-			c.arc(0, 0, 200, 0, 2 * Math.PI);
+			c.arc(0, 0, 50, 0, 2 * Math.PI);
 		c.restore();
 		c.stroke();
 
 		c.beginPath();
 		c.save();
 			c.scale(1, Math.abs(Math.sin(v03 + 0.55)));
-			c.arc(0, 0, 200, -Math.PI, Math.PI);
+			c.arc(0, 0, 50, -Math.PI, Math.PI);
 		c.restore();
 		c.stroke();
 	c.restore();
 
 
 	c.save();
-		c.scale(3, 3);
+//		c.scale(4, 4);
 		c.textAlign = 'center';
 
-		c.fillText(2015, 0, 20);
+		c.fillText(2015, 0, 16);
 
 
 // Everythind drawn until this point will be covered with pattern
@@ -143,28 +146,31 @@ setInterval(function(){
 			c.globalCompositeOperation = 'source-atop';
 			c.fillStyle = pattern;
 			c.rect(-250, -250, 500, 500);
-			c.setTransform(1,0,0,1,0,0); // Unlike regular transform(), it is not multiplied with previous value
-			c.translate(Math.cos(patternMovementAngle) * t % 16, Math.sin(patternMovementAngle) * t % 16);
+			c.setTransform(
+				1,
+				0,
+				0,
+				1,
+				Math.cos(patternMovementAngle) * t % 16,
+				Math.sin(patternMovementAngle) * t % 16
+			); // Unlike regular transform(), it is not multiplied with previous state
 			c.fill();
 		c.restore();
 
-		c.fillText('We want to invite you', 0, -80);
-		c.fillText('— to —', 0, -70);
-		c.fillText('——', 0, 70);
-		c.fillText('a huge compo', 0, 80);
-		c.fillText('of tiny js code', 0, 90);
+		c.fillText('A huge compo', 0, -55);
+		c.fillText('of tiny code', 0, 60);
 	c.restore();
 
 // DRAW LOGO
 
-	c.lineWidth=4;
+	// c.lineWidth=4;
 	c.beginPath();
 	// Save point
 	c.save();
 	// Transformatin matrix. This is the only way to get skew transform
 	// Scale up by factor 4 (makes all coordinates shorter), once we already have to call this
 	// Askew with parameter -3. Some hard Math here. It's easier to guess.
-	var __inline_transform = c.transform(2, 0, -1.5, 2, 0, 0);
+	var __inline_transform = c.transform(.5, 0, -.6, .5, 0, 0);
 
 	// S
 	// Line just started, so there's not implicit lineTo
