@@ -35,7 +35,9 @@ var VIEWPORT_HEIGHT = 180; // constant
 var pattern;
 var patternMovementAngle;
 var t = 0;
-var textState = 0;
+var textState;
+
+var __inline_intervalId = textState = 40;
 
 // Variables that can (and should) be reused
 var v01, v02, v03;
@@ -55,7 +57,7 @@ setInterval(function(){
 		c.fillRect(0, 0, 16, 16);
 		c.strokeStyle = c.fillStyle = 'hsl(' + (v03 + 120) + ',50%,50%)';
 		if (Math.random() < 0.5){
-			c.arc(8, 8, 5 * Math.random() + 2, 0, 2 * Math.PI);
+			c.arc(8, 8, 5 * Math.random() + 2, 0, 7);
 			if (Math.random() < 0.5){
 				c.stroke();
 			} else {
@@ -77,7 +79,7 @@ setInterval(function(){
 			c.stroke();
 		}
 		pattern = c.createPattern(a, '');
-		patternMovementAngle = Math.random() * 2 * Math.PI;
+		patternMovementAngle = Math.random() * 44;
 		textState = ++textState % 3;
 	}
 	t = ++t%150;
@@ -95,6 +97,7 @@ setInterval(function(){
 	c.scale(v03, v03);
 	c.clearRect(-VIEWPORT_WIDTH/2 + 3, -VIEWPORT_HEIGHT/2 + 3, VIEWPORT_WIDTH - 6, VIEWPORT_HEIGHT - 6);
 	c.strokeRect(-VIEWPORT_WIDTH/2 + 3, -VIEWPORT_HEIGHT/2 + 3, VIEWPORT_WIDTH - 6, VIEWPORT_HEIGHT - 6);
+	// c.stroke();
 	c.globalAlpha = 1;
 
 	// From on now we have rect (-VW/2, -VH/2) to (+VW/2, +VH/2).
@@ -104,11 +107,11 @@ setInterval(function(){
 
 
 
-	c.fillText(['Have a', 'Departure date', 'Platform'][textState], 0, -63);
-	c.fillText(['nice trip!', 'February 1', 'JavaScript'][textState], 0, 70);
+	c.fillText(['js1k.com', 'Have a', '1 Kb'][textState], 0, -63);
+	c.fillText(['February', 'nice trip!', 'JS demo'][textState], 0, 70);
 
-	v03= Math.abs(80-t);
-	c.clearRect(-50, -v03, 100, v03*2);
+	var __inline_clearHeight = v03 = Math.abs(80-t);
+	c.clearRect(-50, __inline_clearHeight, 100, -v03*2);
 
 	c.lineWidth = 4;
 	c.fillText(2015, 0, 16);
@@ -130,14 +133,14 @@ setInterval(function(){
 		c.beginPath();
 		c.save();
 			c.scale(Math.abs(Math.sin(v03 - .2)), 1);
-			c.arc(0, 0, 50, 0, 2 * Math.PI);
+			c.arc(0, 0, 50, 0, 7);
 		c.restore();
 		c.stroke();
 
 		c.beginPath();
 		c.save();
 			c.scale(1, Math.abs(Math.sin(v03 + 1.8)));
-			c.arc(0, 0, 50, -Math.PI, Math.PI);
+			c.arc(0, 0, 50, -9, 0);
 		c.restore();
 		c.stroke();
 	c.restore();
@@ -208,4 +211,4 @@ setInterval(function(){
 
 
 
-}, 40);
+}, __inline_intervalId);
