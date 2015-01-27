@@ -35,6 +35,7 @@ var VIEWPORT_HEIGHT = 180; // constant
 var pattern;
 var patternMovementAngle;
 var t = 0;
+var textState = 0;
 
 // Variables that can (and should) be reused
 var v01, v02, v03;
@@ -77,6 +78,7 @@ setInterval(function(){
 		}
 		pattern = c.createPattern(a, '');
 		patternMovementAngle = Math.random() * 2 * Math.PI;
+		textState = ++textState % 3;
 	}
 	t = ++t%150;
 
@@ -85,20 +87,31 @@ setInterval(function(){
 	var __inline_canvasHeight = a.height = v02;
 	var __inline_canvasAlpha = c.globalAlpha = .1;
 	c.fillRect(0, 0, __inline_canvasWidth, __inline_canvasHeight, __inline_canvasAlpha);
-	c.globalAlpha = 1;
 	// Set coordinate origin to the center of the screen
 	// Otherwise it would be hard to do rotations
 	c.translate(v01/2, v02/2);
 	// Scale context so logical viewport fits into physical
 	v03 = Math.min(v01 / VIEWPORT_WIDTH, v02 / VIEWPORT_HEIGHT);
 	c.scale(v03, v03);
-
 	c.clearRect(-VIEWPORT_WIDTH/2 + 3, -VIEWPORT_HEIGHT/2 + 3, VIEWPORT_WIDTH - 6, VIEWPORT_HEIGHT - 6);
+	c.strokeRect(-VIEWPORT_WIDTH/2 + 3, -VIEWPORT_HEIGHT/2 + 3, VIEWPORT_WIDTH - 6, VIEWPORT_HEIGHT - 6);
+	c.globalAlpha = 1;
 
 	// From on now we have rect (-VW/2, -VH/2) to (+VW/2, +VH/2).
 	// Everything outside this rect is transparent
 
+	c.textAlign = 'center';
+
+
+
+	c.fillText(['Have a', 'Departure date', 'Platform'][textState], 0, -63);
+	c.fillText(['nice trip!', 'February 1', 'JavaScript'][textState], 0, 70);
+
+	v03= Math.abs(80-t);
+	c.clearRect(-50, -v03, 100, v03*2);
+
 	c.lineWidth = 4;
+	c.fillText(2015, 0, 16);
 
 
 	var __inline_alpha = v03 = Math.PI/4 - Math.PI/(1+Math.exp(t/7.5-10));
@@ -110,8 +123,7 @@ setInterval(function(){
 
 		// Partial drawing af lines
 		c.setLineDash([
-			3500, // This value is carefuly calculated
-			3500 // This one should just be big enough
+			3500
 		]);
 		c.lineDashOffset  = 3500 - t * 25;
 
@@ -130,11 +142,7 @@ setInterval(function(){
 		c.stroke();
 	c.restore();
 
-		c.textAlign = 'center';
 
-		c.fillText(2015, 0, 16);
-		c.fillText('2015-02-01', 10, -71);
-		c.fillText('2015-03-01', 10, -56);
 
 
 // Everythind drawn until this point will be covered with pattern
@@ -194,13 +202,6 @@ setInterval(function(){
 		// Again, short vertical line to correct the line end
 		c.lineTo(26, 13);
 		c.stroke();
-
-		c.fillText('Dep:', -170, -120);
-		c.fillText('Arr:', -150, -95);
-		c.fillText('To:', -130, -70);
-
-		c.restore();
-
 
 		
 //	c.restore();
