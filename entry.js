@@ -27,8 +27,8 @@
  */
 
 // Dimensions of the card itself
-var VIEWPORT_WIDTH = 100; // constant
-var VIEWPORT_HEIGHT = 150; // constant
+var VIEWPORT_WIDTH = 120; // constant
+var VIEWPORT_HEIGHT = 180; // constant
 
 // Variables that holds certain values between setInterval calls
 // Very unlikely these can be reused
@@ -130,77 +130,81 @@ setInterval(function(){
 		c.stroke();
 	c.restore();
 
-
-	c.save();
-//		c.scale(4, 4);
 		c.textAlign = 'center';
 
 		c.fillText(2015, 0, 16);
+		c.fillText('2015-02-01', 10, -71);
+		c.fillText('2015-03-01', 10, -56);
 
 
 // Everythind drawn until this point will be covered with pattern
-		c.save();
-			c.globalCompositeOperation = 'source-atop';
-			c.fillStyle = pattern;
-			c.setTransform(
-				1,
-				0,
-				0,
-				1,
-				Math.cos(patternMovementAngle) * t % 16,
-				Math.sin(patternMovementAngle) * t % 16
-			); // Unlike regular transform(), it is not multiplied with previous state
-			c.rect(-16, -16, 3500, 3500); // I hope, that's enough
-			c.fill();
-		c.restore();
-
-		c.fillText('A huge compo', 0, -55);
-		c.fillText('of tiny code', 0, 60);
+	c.save();
+		c.globalCompositeOperation = 'source-atop';
+		c.fillStyle = pattern;
+		c.setTransform(
+			1,
+			0,
+			0,
+			1,
+			Math.cos(patternMovementAngle) * t % 16,
+			Math.sin(patternMovementAngle) * t % 16
+		); // Unlike regular transform(), it is not multiplied with previous state
+		c.rect(-16, -16, 3500, 3500); // I hope, that's enough
+		c.fill();
 	c.restore();
 
 // DRAW LOGO
 
-	// c.lineWidth=4;
-	c.beginPath();
-	// Save point
-	c.save();
-	// Transformatin matrix. This is the only way to get skew transform
-	// Scale up by factor 4 (makes all coordinates shorter), once we already have to call this
-	// Askew with parameter -3. Some hard Math here. It's easier to guess.
-	var __inline_transform = c.transform(.6, 0, -.5, .6, 0, 0);
+		// c.lineWidth=4;
+		c.beginPath();
+		// Save point
+		c.save();
+		// Transformatin matrix. This is the only way to get skew transform
+		// Scale up by factor 4 (makes all coordinates shorter), once we already have to call this
+		// Askew with parameter -3. Some hard Math here. It's easier to guess.
+		var __inline_transform = c.transform(.6, 0, -.5, .6, 0, 0);
 
-	// S
-	// Line just started, so there's not implicit lineTo
-	c.arc(-7, -6, 5, -0.7, 2.5, !__inline_transform);
-	// Implicit lineTo
-	c.arc(-9, 6, 5, -0.7, 2.5);
+		// S
+		// Line just started, so there's not implicit lineTo
+		c.arc(-7, -6, 5, -0.7, 2.5, !__inline_transform);
+		// Implicit lineTo
+		c.arc(-9, 6, 5, -0.7, 2.5);
 
 
-	// J
-	c.moveTo(-20, -13); // Top of J stem
-	// Implicit lineTo
-	c.arc(-24, 7, 4, 0, 2.5); // Bottom J arc
+		// J
+		c.moveTo(-20, -13); // Top of J stem
+		// Implicit lineTo
+		c.arc(-24, 7, 4, 0, 2.5); // Bottom J arc
 
-	// 1
-	c.moveTo(2, -11);
-	c.lineTo(8, -11);
-	c.lineTo(8, 13);
+		// 1
+		c.moveTo(2, -11);
+		c.lineTo(8, -11);
+		c.lineTo(8, 13);
 
-	// K
+		// K
 
-	c.moveTo(17, -13);
-	// A short vertical line to correct the line end
-	// It causes small view glitch, but it anyway looks much better this way
-	c.lineTo(17, 13);
-	c.moveTo(26, -13);
-	c.lineTo(26, -12.5);
-	c.lineTo(21, 0);
-	c.lineTo(26, 12.5);
-	// Again, short vertical line to correct the line end
-	c.lineTo(26, 13);
-	c.stroke();
+		c.moveTo(17, -13);
+		// A short vertical line to correct the line end
+		// It causes small view glitch, but it anyway looks much better this way
+		c.lineTo(17, 13);
+		c.moveTo(26, -13);
+		c.lineTo(26, -12.5);
+		c.lineTo(21, 0);
+		c.lineTo(26, 12.5);
+		// Again, short vertical line to correct the line end
+		c.lineTo(26, 13);
+		c.stroke();
 
-	//c.restore();
+		c.fillText('Dep:', -170, -120);
+		c.fillText('Arr:', -150, -95);
+		c.fillText('To:', -130, -70);
+
+		c.restore();
+
+
+		
+//	c.restore();
+
 
 
 }, 40);
