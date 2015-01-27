@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 var INTERVAL_ONLY = true;
+var regPackNull = 'i';
 
 process.chdir(__dirname);
 
@@ -109,6 +110,32 @@ function run(){
 
 	minified = minified.replace(/^;+|;+$/g, ''); // Strip leading and trailing semicolons
 
+	var intervalExpression = '';
+
+
+	if (INTERVAL_ONLY){
+		// Extract interval
+		var match = /setInterval\(function\(\)\{(.*)\},((?:\w+=)*\d+)\)$/.exec(minified);
+		if (match){
+			intervalExpression = match[2];
+			minified = match[1];
+		}
+	}
+
+	if (true){
+		// Rename i variable
+		var letters = {};
+		minified.replace(/[A-Z]/gi, function(letter){
+			letters[letter] = -~letters[letter];
+		});
+		delete letters.i;
+		var unused = Object.keys(letters).sort().reverse().filter(function(letter){
+			return !(new RegExp('\\b' + letter + '\\b')).test(minified + '\n' + intervalExpression);
+		});
+		if (unused.length){
+			minified = minified.replace(/\bi\b/g, unused[0]);
+		}
+	}
 
 
 
@@ -118,8 +145,9 @@ function run(){
 
 	// RegPack
 	var runRegPack = require('./includes/regpackrun.js');
-	var bestRegpacked = '';
+	var bestRegpacked;
 	var bestRegpackedLength = Infinity;
+	var bestWithMath;
 
 
 	[true, false].forEach(function(withMath){
@@ -134,12 +162,19 @@ function run(){
 					};
 					console.log('Trying RegPack with ' + JSON.stringify(regPackOptions));
 					regPackOptions.originalString = minified;
+					if (INTERVAL_ONLY && withMath){
+						regPackOptions.originalString = 'with(Math)' + regPackOptions.originalString;
+					}
 					regPackOptions.paramOHashWebGL = false;
 					regPackOptions.paramOHashAudio = false;
 					var regPacked = runRegPack(regPackOptions, withMath);
+					if (INTERVAL_ONLY){
+						regPacked = regPacked.replace(/(?:with\(Math\))?eval\(_\)?$/, 'setInterval(_,' + intervalExpression + ')')
+					}
 					var regPackedLength = Buffer.byteLength(regPacked);
 					console.log(regPackedLength);
 					if (regPackedLength < bestRegpackedLength){
+						bestWithMath = withMath;
 						bestRegpacked = regPacked;
 						bestRegpackedLength = regPackedLength;
 					}
@@ -153,7 +188,7 @@ function run(){
 
 	var byteLength = Buffer.byteLength(bestRegpacked);
 
-	console.log(byteLength + ' bytes');
+	console.log(byteLength + ' bytes, withMath: ' + bestWithMath);
 	lastResult = byteLength;
 
 	var inlined = require('fs').readFileSync('shim-normal.html', 'utf-8');

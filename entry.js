@@ -34,7 +34,7 @@ var VIEWPORT_HEIGHT = 180; // constant
 // Very unlikely these can be reused
 var pattern;
 var patternMovementAngle;
-var t = 0;
+g = null;
 var textState;
 
 var __inline_intervalId = textState = 40;
@@ -47,8 +47,8 @@ setInterval(function(){
 	v01 = a.width;
 	v02 = a.height;
 
-	// t is a global state
-	if (!t){
+	// g is a global state
+	if (!g){
 		// UPDATE PATTERN
 		// Both set size and reset canvas
 		a.width = a.height = 16;
@@ -82,7 +82,7 @@ setInterval(function(){
 		patternMovementAngle = Math.random() * 44;
 		textState = ++textState % 3;
 	}
-	t = ++t%150;
+	g = ++g%150;
 
 	// Reset canvas and its state (including transforms)
 	var __inline_canvasWidth = a.width = v01;
@@ -111,13 +111,13 @@ setInterval(function(){
 	c.fillText(['February', 'Have a', '1K JS'][textState], 0, -63);
 	c.fillText(['js1k.com', 'nice trip!', 'Compo'][textState], 0, 70);
 
-	var __inline_clearHeight = v03 = Math.abs(80-t);
+	var __inline_clearHeight = v03 = Math.abs(80-g);
 	c.clearRect(-50, __inline_clearHeight, 100, -v03*2);
 
 	c.fillText(2015, 0, 16);
 
 
-	var __inline_alpha = v03 = Math.PI/4 - Math.PI/(1+Math.exp(t/7.5-10));
+	var __inline_alpha = v03 = Math.PI/4 - Math.PI/(1+Math.exp(g/7.5-10));
 
 
 	c.save();
@@ -128,7 +128,7 @@ setInterval(function(){
 		c.setLineDash([
 			3500
 		]);
-		c.lineDashOffset  = 3500 - t * 25;
+		c.lineDashOffset  = 3500 - g * 25;
 
 		c.beginPath();
 		c.save();
@@ -157,8 +157,8 @@ setInterval(function(){
 			0,
 			0,
 			1,
-			Math.cos(patternMovementAngle) * t % 16,
-			Math.sin(patternMovementAngle) * t % 16
+			Math.cos(patternMovementAngle) * g % 16,
+			Math.sin(patternMovementAngle) * g % 16
 		); // Unlike regular transform(), it is not multiplied with previous state
 		c.rect(-16, -16, 3500, 3500); // I hope, that's enough
 		c.fill();

@@ -128,7 +128,7 @@ function runRegPack(formParams, withMath){
 		require('vm').runInContext(code, sandbox, 'regpack.html/script');
 	});
 
-	sandbox.callRegPack(!withMath);
+	sandbox.callRegPack(!!withMath);
 
 	if (!elementsById.stage2Output){
 		throw new Error('something went wrong with RegPack');
