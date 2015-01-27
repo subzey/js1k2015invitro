@@ -103,17 +103,17 @@ setInterval(function(){
 	// From on now we have rect (-VW/2, -VH/2) to (+VW/2, +VH/2).
 	// Everything outside this rect is transparent
 
+	c.lineWidth = 4;
 	c.textAlign = 'center';
 
 
 
-	c.fillText(['js1k.com', 'Have a', '1 Kb'][textState], 0, -63);
-	c.fillText(['February', 'nice trip!', 'JS demo'][textState], 0, 70);
+	c.fillText(['February', 'Have a', '1K JS'][textState], 0, -63);
+	c.fillText(['js1k.com', 'nice trip!', 'Compo'][textState], 0, 70);
 
 	var __inline_clearHeight = v03 = Math.abs(80-t);
 	c.clearRect(-50, __inline_clearHeight, 100, -v03*2);
 
-	c.lineWidth = 4;
 	c.fillText(2015, 0, 16);
 
 

@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+var INTERVAL_ONLY = true;
+
 process.chdir(__dirname);
 
 var lastResult = NaN;
@@ -108,27 +110,48 @@ function run(){
 	minified = minified.replace(/^;+|;+$/g, ''); // Strip leading and trailing semicolons
 
 
+
+
 	require('fs').writeFileSync('build/uglified.js', minified);
 
 	console.log('RegPack...');
 
 	// RegPack
 	var runRegPack = require('./includes/regpackrun.js');
-	var regPackOptions = {
-		originalString: minified,
-		paramOHashWebGL: false,
-		paramOHashAudio: false
-	};
-
-	var regpackedWithMath = runRegPack(regPackOptions, true);
-	var regpackedWithoutMath = runRegPack(regPackOptions, false);
-
-	var regpacked = Buffer.byteLength(regpackedWithMath) < Buffer.byteLength(regpackedWithoutMath) ? regpackedWithMath : regpackedWithoutMath;
+	var bestRegpacked = '';
+	var bestRegpackedLength = Infinity;
 
 
-	require('fs').writeFileSync('build/regpacked.js', regpacked);
+	[true, false].forEach(function(withMath){
+		[0,1,2].forEach(function(paramGain){
+			[0,1,2].forEach(function(paramLength){
+				[0,1,2].forEach(function(paramCopies){
+					var regPackOptions = {
+						paramFGain: paramGain,
+						paramFLength: paramLength,
+						paramFCopies: paramCopies,
+						withMath: withMath
+					};
+					console.log('Trying RegPack with ' + JSON.stringify(regPackOptions));
+					regPackOptions.originalString = minified;
+					regPackOptions.paramOHashWebGL = false;
+					regPackOptions.paramOHashAudio = false;
+					var regPacked = runRegPack(regPackOptions, withMath);
+					var regPackedLength = Buffer.byteLength(regPacked);
+					console.log(regPackedLength);
+					if (regPackedLength < bestRegpackedLength){
+						bestRegpacked = regPacked;
+						bestRegpackedLength = regPackedLength;
+					}
+				});
+			});
+		});
+	});
 
-	var byteLength = Buffer.byteLength(regpacked);
+
+	require('fs').writeFileSync('build/regpacked.js', bestRegpacked);
+
+	var byteLength = Buffer.byteLength(bestRegpacked);
 
 	console.log(byteLength + ' bytes');
 	lastResult = byteLength;
@@ -136,7 +159,7 @@ function run(){
 	var inlined = require('fs').readFileSync('shim-normal.html', 'utf-8');
 
 	inlined = inlined.replace(/(\t*)<script\s+src[^]*?<\/script>/, function(_, tab){
-			return tab + '<script>\n// start of submission //\n' + regpacked + '\n// end of submission //\n' + tab + '</script>';
+			return tab + '<script>\n// start of submission //\n' + bestRegpacked + '\n// end of submission //\n' + tab + '</script>';
 		}
 	);
 
