@@ -34,7 +34,7 @@ var VIEWPORT_HEIGHT = 180; // constant
 // Very unlikely these can be reused
 var pattern;
 var patternMovementAngle;
-if (!__RegPack){
+if (typeof __RegPack === 'undefined'){
 	g = null;
 }
 var textState;
