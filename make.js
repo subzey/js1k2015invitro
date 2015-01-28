@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 var INTERVAL_ONLY = true;
+var REMOVE_VAR = true;
 var regPackNull = 'i';
 
 process.chdir(__dirname);
@@ -35,7 +36,9 @@ function run(){
 
 	// Determine constants
 
-	var constants = {};
+	var constants = {
+		__RegPack: true
+	};
 
 	// Sandbox js environment for running code
 	var sandbox = require('vm').createContext({});
@@ -97,13 +100,14 @@ function run(){
 	});
 	var minified = result.code;
 
-	if (true){
+	require('fs').writeFileSync('build/uglified.js', minified);
+
+	if (REMOVE_VAR){
+		console.log('Removing var keywords');
 		minified = minified.replace(/\bvar\s+([^;]+)/g, function(_, vars){
 			var cleaned = vars.split(',').filter(function(varDecl){
 				return /=/.test(varDecl);
 			}).join(',');
-			console.log(vars);
-			console.log(cleaned);
 			return cleaned;
 		});
 	}
@@ -115,10 +119,13 @@ function run(){
 
 	if (INTERVAL_ONLY){
 		// Extract interval
-		var match = /setInterval\(function\(\)\{(.*)\},((?:\w+=)*\d+)\)$/.exec(minified);
+		var match = /^setInterval\(function\(\)\{(.*)\},((?:\w+=)*\d+)\)$/.exec(minified);
 		if (match){
 			intervalExpression = match[2];
 			minified = match[1];
+		} else {
+			console.log('Warning: setInterval regexp failed. INTERVAL_ONLY is disabled');
+			INTERVAL_ONLY = false;
 		}
 	}
 
@@ -137,9 +144,14 @@ function run(){
 		}
 	}
 
+	var minifiedWithMath;
+	if (INTERVAL_ONLY){
+		minifiedWithMath = UglifyJS.minify('with(Math){' + minified + '}', {fromString: true}).code;
+		minifiedWithMath = minifiedWithMath.replace(/^;+|;+$/g, '');
+	}
 
 
-	require('fs').writeFileSync('build/uglified.js', minified);
+
 
 	console.log('RegPack...');
 
@@ -157,13 +169,12 @@ function run(){
 					var regPackOptions = {
 						paramFGain: paramGain,
 						paramFLength: paramLength,
-						paramFCopies: paramCopies,
-						withMath: withMath
+						paramFCopies: paramCopies
 					};
-					console.log('Trying RegPack with ' + JSON.stringify(regPackOptions));
+					process.stdout.write('Trying RegPack, ' + [paramGain, paramLength, paramCopies].join(', ') + (withMath ? ' with Math' : '') + '... ');
 					regPackOptions.originalString = minified;
 					if (INTERVAL_ONLY && withMath){
-						regPackOptions.originalString = 'with(Math)' + regPackOptions.originalString;
+						regPackOptions.originalString = minifiedWithMath;
 					}
 					regPackOptions.paramOHashWebGL = false;
 					regPackOptions.paramOHashAudio = false;
@@ -172,7 +183,7 @@ function run(){
 						regPacked = regPacked.replace(/(?:with\(Math\))?eval\(_\)?$/, 'setInterval(_,' + intervalExpression + ')')
 					}
 					var regPackedLength = Buffer.byteLength(regPacked);
-					console.log(regPackedLength);
+					process.stdout.write(regPackedLength + '\n');
 					if (regPackedLength < bestRegpackedLength){
 						bestWithMath = withMath;
 						bestRegpacked = regPacked;

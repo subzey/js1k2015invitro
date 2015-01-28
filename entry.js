@@ -34,7 +34,9 @@ var VIEWPORT_HEIGHT = 180; // constant
 // Very unlikely these can be reused
 var pattern;
 var patternMovementAngle;
-g = null;
+if (!__RegPack){
+	g = null;
+}
 var textState;
 
 var __inline_intervalId = textState = 40;
