@@ -27,8 +27,8 @@
  */
 
 // Dimensions of the card itself
-var VIEWPORT_WIDTH = 120; // constant
-var VIEWPORT_HEIGHT = 180; // constant
+var VIEWPORT_WIDTH = 100; // constant
+var VIEWPORT_HEIGHT = 170; // constant
 
 // Variables that holds certain values between setInterval calls
 // Very unlikely these can be reused
@@ -110,11 +110,11 @@ setInterval(function(){
 
 
 
-	c.fillText(['Have a', 'The compo', '1k of JS', 'js1k.com'][textState], 0, -63);
-	c.fillText(['good trip!', 'is back!', 'Tons of awesome', 'February'][textState], 0, 70);
+	c.fillText(['Have a', 'The compo', '1k of JS', 'js1k.com'][textState], 0, -62);
+	c.fillText(['good trip!', 'is back!', 'Tons of awesome', 'February'][textState], 0, 69);
 
 	var __inline_clearHeight = v03 = Math.abs(80-g);
-	c.clearRect(-50, __inline_clearHeight, 100, -v03*2);
+	c.clearRect(-40, __inline_clearHeight, 80, -v03*2);
 
 	c.fillText(2015, 0, 16);
 
