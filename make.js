@@ -2,6 +2,7 @@
 
 var INTERVAL_ONLY = true;
 var REMOVE_VAR = true;
+var CANVAS_HASHING = true;
 var regPackNull = 'i';
 
 process.chdir(__dirname);
@@ -144,6 +145,8 @@ function run(){
 		}
 	}
 
+	var canvasHashingCode = 'for(i in c)Math[i[0]+i[2]+[i[7]]]=i;';
+
 	var minifiedWithMath;
 	if (INTERVAL_ONLY){
 		minifiedWithMath = UglifyJS.minify('with(Math){' + minified + '}', {fromString: true}).code;
@@ -162,7 +165,7 @@ function run(){
 	var bestWithMath;
 
 
-	[true, false].forEach(function(withMath){
+	[true /*, false */].forEach(function(withMath){
 		[0,1,2].forEach(function(paramGain){
 			[0,1,2].forEach(function(paramLength){
 				[0,1,2].forEach(function(paramCopies){
@@ -176,6 +179,12 @@ function run(){
 					if (INTERVAL_ONLY && withMath){
 						regPackOptions.originalString = minifiedWithMath;
 					}
+					if (CANVAS_HASHING){
+						regPackOptions.originalString = canvasHashingCode + regPackOptions.originalString.replace(/c\.(\w+)/g, function(_, i){
+							return 'c[Math.' + [i[0]+i[2]+[i[7]]] + ']';
+						});
+					}
+					regPackOptions.paramOHash2D = false;
 					regPackOptions.paramOHashWebGL = false;
 					regPackOptions.paramOHashAudio = false;
 					var regPacked = runRegPack(regPackOptions, withMath);
