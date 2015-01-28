@@ -80,7 +80,7 @@ setInterval(function(){
 		}
 		pattern = c.createPattern(a, '');
 		patternMovementAngle = Math.random() * 44;
-		textState = ++textState % 3;
+		textState = ++textState % 4;
 	}
 	g = ++g%150;
 
@@ -108,8 +108,8 @@ setInterval(function(){
 
 
 
-	c.fillText(['February', 'Have a', '1K JS'][textState], 0, -63);
-	c.fillText(['js1k.com', 'nice trip!', 'Compo'][textState], 0, 70);
+	c.fillText(['Have a', 'The compo', '1k of JS', 'js1k.com'][textState], 0, -63);
+	c.fillText(['good trip!', 'is back!', 'Tons of awesome', 'February'][textState], 0, 70);
 
 	var __inline_clearHeight = v03 = Math.abs(80-g);
 	c.clearRect(-50, __inline_clearHeight, 100, -v03*2);
