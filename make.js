@@ -145,7 +145,8 @@ function run(){
 		}
 	}
 
-	var canvasHashingCode = 'for(i in c)Math[i[0]+i[2]+[i[7]]]=i;';
+	var canvasHashingCode = 'for(i in c)Math[i[0]+[i[3]||0]+[i[6]]+[i[9]]]=i;';
+	// See /tools/hashstat.html
 
 	var minifiedWithMath;
 	if (INTERVAL_ONLY){
@@ -181,7 +182,7 @@ function run(){
 					}
 					if (CANVAS_HASHING){
 						regPackOptions.originalString = canvasHashingCode + regPackOptions.originalString.replace(/c\.(\w+)/g, function(_, i){
-							return 'c[Math.' + [i[0]+i[2]+[i[7]]] + ']';
+							return 'c[Math.' + [i[0]+[i[3]||0]+[i[6]]+[i[9]]] + ']';
 						});
 					}
 					regPackOptions.paramOHash2D = false;

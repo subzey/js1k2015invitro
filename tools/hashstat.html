@@ -1,0 +1,77 @@
+// <script>
+// This tool is for picking a good hashing indices (letter offsets) for canvas ctx
+// The result is <number of collisions> <indices> <collisions>
+// Place required props into array above. If there are any collisions from the list,
+// that index combination would not be in the output
+
+var requiredProps = ["fill", "stroke", "rotate", "transform", "arc", "moveTo", "lineTo", "fillText", "setLineDash", "createPattern"];
+var MAX_INDEX = 14;
+
+var firefoxCtxProps = ["save","restore","scale","rotate","translate","transform","setTransform","createLinearGradient","createRadialGradient","createPattern","clearRect","fillRect","strokeRect","beginPath","fill","stroke","drawFocusIfNeeded","clip","isPointInPath","isPointInStroke","fillText","strokeText","measureText","drawImage","createImageData","getImageData","putImageData","setLineDash","getLineDash","closePath","moveTo","lineTo","quadraticCurveTo","bezierCurveTo","arcTo","rect","arc","canvas","globalAlpha","globalCompositeOperation","strokeStyle","fillStyle","shadowOffsetX","shadowOffsetY","shadowBlur","shadowColor","mozCurrentTransform","mozCurrentTransformInverse","mozFillRule","mozDash","mozDashOffset","mozTextStyle","mozImageSmoothingEnabled","lineWidth","lineCap","lineJoin","miterLimit","lineDashOffset","font","textAlign","textBaseline"];
+var chromeCtxProps = ["textBaseline","textAlign","font","lineDashOffset","miterLimit","lineJoin","lineCap","lineWidth","shadowColor","shadowBlur","shadowOffsetY","shadowOffsetX","fillStyle","strokeStyle","imageSmoothingEnabled","webkitImageSmoothingEnabled","globalCompositeOperation","globalAlpha","canvas","save","restore","scale","rotate","translate","transform","setTransform","resetTransform","createLinearGradient","createRadialGradient","createPattern","clearRect","fillRect","strokeRect","beginPath","fill","stroke","drawFocusIfNeeded","clip","isPointInPath","isPointInStroke","fillText","strokeText","measureText","drawImage","createImageData","getImageData","putImageData","getContextAttributes","setLineDash","getLineDash","setAlpha","setCompositeOperation","setLineWidth","setLineCap","setLineJoin","setMiterLimit","clearShadow","setStrokeColor","setFillColor","drawImageFromRect","setShadow","closePath","moveTo","lineTo","quadraticCurveTo","bezierCurveTo","arcTo","rect","arc","ellipse"];
+
+var ctxDict = {};
+[].concat(firefoxCtxProps).concat(chromeCtxProps).forEach(function(k){
+	ctxDict[k] = k;
+});
+
+
+
+	for (var count=2; count <= 5; count++){
+		var indices = [];
+		for (var i=0; i < count; i++){
+			indices[i] = 0;
+		}
+		outer:
+		while (true) {
+			// Increment logic
+			indices[0]++;
+			for (var i=0; i < count; i++){
+				if (indices[i] > MAX_INDEX){
+					if (i === count - 1){
+						break outer;
+					}
+					indices[i+1]++;
+					indices[i] = 0;
+				}
+			}
+			// Validation/dedup
+			for (var i=0; i < count - 1; i++){
+				if (indices[i] >= indices[i+1]){
+					continue outer;
+				}
+			}
+			var hashes = {};
+			var dupes = {};
+			var collisions = 0;
+			for (k in ctxDict){
+				var prop = ctxDict[k];
+				var hash = '';
+				for (var j=0; j<count; j++){
+					hash += [prop[indices[j]]];
+				}
+				// console.log(prop, '->', hash);
+				if (!hashes[hash]){
+					hashes[hash] = [];
+				}
+				hashes[hash].push(prop);
+				if (hashes[hash].length > 1){
+					dupes[hash] = hashes[hash];
+					collisions++;
+				}
+			}
+			var allDupeProps = [];
+			for (var k in dupes){
+				allDupeProps.push.apply(allDupeProps, dupes[k]);
+			}
+			for (var i=0; i<requiredProps.length; i++){
+				var requiredProp = requiredProps[i];
+				if (allDupeProps.indexOf(requiredProp) !== -1){
+					continue outer;
+				}
+			}
+			allDupeProps.sort();
+			console.log(('000' + allDupeProps.length).slice(-3) + '\t' + indices.join() + '\t' + allDupeProps.join(', '));
+		}
+	}
+// </script>
