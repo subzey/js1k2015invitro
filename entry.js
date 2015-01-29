@@ -34,23 +34,25 @@ var VIEWPORT_HEIGHT = 170; // constant
 // Very unlikely these can be reused
 var pattern;
 var patternMovementAngle;
+var animationState;
 if (typeof __RegPack === 'undefined'){
 	g = null;
 }
 var textState;
 
-var __inline_intervalId = textState = 40;
+var __inline_intervalId = 40;
 
 // Variables that can (and should) be reused
 var v01, v02, v03;
 
 
 setInterval(function(){
+	animationState = g++%150;
 	v01 = a.width;
 	v02 = a.height;
 
-	// g is a global state
-	if (!g){
+	// animationState is a global state
+	if (!animationState){
 		// UPDATE PATTERN
 		// Both set size and reset canvas
 		a.width = a.height = 16;
@@ -82,9 +84,7 @@ setInterval(function(){
 		}
 		pattern = c.createPattern(a, '');
 		patternMovementAngle = Math.random() * 44;
-		textState = ++textState % 4;
 	}
-	g = ++g%150;
 
 	// Reset canvas and its state (including transforms)
 	var __inline_canvasWidth = a.width = v01;
@@ -97,29 +97,38 @@ setInterval(function(){
 	// Scale context so logical viewport fits into physical
 	v03 = Math.min(v01 / VIEWPORT_WIDTH, v02 / VIEWPORT_HEIGHT);
 	c.scale(v03, v03);
+
+	// Bokeh
+
+	for (v03=100; v03--;__inline_bokehForCounting){
+		c.beginPath();
+		c.arc(Math.sin(v03+g/3500)*500, v03*3-150, 25, 0, 7);
+		var __inline_bokehForCounting = c.fill();
+	}
+
 	c.clearRect(-VIEWPORT_WIDTH/2 + 3, -VIEWPORT_HEIGHT/2 + 3, VIEWPORT_WIDTH - 6, VIEWPORT_HEIGHT - 6);
 	c.strokeRect(-VIEWPORT_WIDTH/2 + 3, -VIEWPORT_HEIGHT/2 + 3, VIEWPORT_WIDTH - 6, VIEWPORT_HEIGHT - 6);
-	// c.stroke();
 	c.globalAlpha = 1;
 
 	// From on now we have rect (-VW/2, -VH/2) to (+VW/2, +VH/2).
 	// Everything outside this rect is transparent
+
 
 	c.lineWidth = 4;
 	c.textAlign = 'center';
 
 
 
-	c.fillText(['Have a', 'The compo', '1k of JS', 'js1k.com'][textState], 0, -62);
-	c.fillText(['good trip!', 'is back!', 'Tons of awesome', 'February'][textState], 0, 69);
+	c.fillText(['The compo', '1k of JS', 'js1k.com', 'Have a'][g/160&3], 0, -62);
+	c.fillText(['is back!', 'Tons of awesome', 'February', 'good trip!'][g/160&3], 0, 69);
 
-	var __inline_clearHeight = v03 = Math.abs(80-g);
-	c.clearRect(-40, __inline_clearHeight, 80, -v03*2);
+	var __inline_clearHeight = v03 = Math.abs(80-animationState);
+	c.clearRect(-45, __inline_clearHeight, 90, -v03*2);
 
 	c.fillText(2015, 0, 16);
 
 
-	var __inline_alpha = v03 = Math.PI/4 - Math.PI/(1+Math.exp(g/7.5-10));
+	var __inline_alpha = v03 = Math.PI/4 - Math.PI/(1+Math.exp(animationState/7.5-10));
 
 
 	c.save();
@@ -130,7 +139,7 @@ setInterval(function(){
 		c.setLineDash([
 			3500
 		]);
-		c.lineDashOffset  = 3500 - g * 25;
+		c.lineDashOffset  = 3500 - animationState * 25;
 
 		c.beginPath();
 		c.save();
@@ -159,8 +168,8 @@ setInterval(function(){
 			0,
 			0,
 			1,
-			Math.cos(patternMovementAngle) * g % 16,
-			Math.sin(patternMovementAngle) * g % 16
+			Math.cos(patternMovementAngle) * animationState % 16,
+			Math.sin(patternMovementAngle) * animationState % 16
 		); // Unlike regular transform(), it is not multiplied with previous state
 		c.rect(-16, -16, 3500, 3500); // I hope, that's enough
 		c.fill();
