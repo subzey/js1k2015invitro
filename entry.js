@@ -100,9 +100,9 @@ setInterval(function(){
 
 	// Bokeh
 
-	for (v03=100; v03--;__inline_bokehForCounting){
+	for (v03=150; v03--;__inline_bokehForCounting){
 		c.beginPath();
-		c.arc(Math.sin(v03+g/3500)*500, v03*3-150, 25, 0, 7);
+		c.arc(Math.sin(v03+g/3500)*500, v03*2-150, 25, 0, 7);
 		var __inline_bokehForCounting = c.fill();
 	}
 
@@ -119,8 +119,8 @@ setInterval(function(){
 
 
 
-	c.fillText(['The compo', '1k of JS', 'js1k.com', 'Have a'][g/160&3], 0, -62);
-	c.fillText(['is back!', 'Tons of awesome', 'February', 'good trip!'][g/160&3], 0, 69);
+	c.fillText(['The compo', '1k of JS', 'js1k.com', 'Have a'][g/150&3], 0, -62);
+	c.fillText(['is back!', 'Tons of awesome', 'February', 'good trip!'][g/150&3], 0, 69);
 
 	var __inline_clearHeight = v03 = Math.abs(80-animationState);
 	c.clearRect(-45, __inline_clearHeight, 90, -v03*2);
