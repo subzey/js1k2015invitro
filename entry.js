@@ -100,9 +100,9 @@ setInterval(function(){
 
 	// Bokeh
 
-	for (v03=150; v03--;__inline_bokehForCounting){
+	for (v03=300; v03--;__inline_bokehForCounting){
 		c.beginPath();
-		c.arc(Math.sin(v03+g/3500)*500, v03*2-150, 25, 0, 7);
+		c.arc(Math.sin(v03+g/3500)*500, v03-150, v03%27, 0, 7);
 		var __inline_bokehForCounting = c.fill();
 	}
 
