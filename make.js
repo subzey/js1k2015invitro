@@ -29,6 +29,9 @@ function run(){
 	try {
 		require('fs').unlinkSync('build/prod.html');
 	} catch (e){  }
+	try {
+		require('fs').unlinkSync('index.html');
+	} catch (e){  }
 
 
 	var UglifyJS = require('uglify-js');
@@ -220,6 +223,7 @@ function run(){
 	);
 
 	require('fs').writeFileSync('build/prod.html', inlined);
+	require('fs').writeFileSync('index.html', inlined);
 }
 
 run();
