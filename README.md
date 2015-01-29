@@ -1,3 +1,9 @@
-# JS1K Invitro, 2015
+# JS1K 2015 Invitro
 
-Golfed by @subzey and @xem.
+[See it live!](http://subzey.github.io/js1k2015invitro/)
+
+A 1021 bytes invitational intro.
+
+Thanks to @xem for valuable ideas.
+
+Greets to all js code golfers! See you at js1k.
